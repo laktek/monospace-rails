@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
         :description => stripe_description,
         :card => stripe_token
       )
-      self.last_4_digits = customer.active_card.last4
+      self.last_4_digits = customer.cards.data.first.last4
       response = customer.update_subscription({:plan => "premium"})
     else
       customer = Stripe::Customer.retrieve(stripe_id)
@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
 
       customer.save
 
-      self.last_4_digits = customer.active_card.last4
+      self.last_4_digits = customer.cards.data.first.last4
     end
 
     self.stripe_id = customer.id
